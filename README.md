@@ -93,7 +93,8 @@ npm run dev
 
 ### 📦 Cart & Checkout
 - **Cart View**  
-  ![Cart](ef6a3dd4-9f3c-45b8-84ea-f3eb532bd6e4.png)
+  <img width="1919" height="1001" alt="AddToCartPage" src="https://github.com/user-attachments/assets/b764ce88-3466-4ecc-9c8a-7042e9cdd6ce" />
+
 
 ### 🛠️ Admin Features
 - **Add Product**  
