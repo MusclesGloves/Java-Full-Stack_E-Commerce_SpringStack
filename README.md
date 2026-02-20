@@ -1,151 +1,203 @@
 # 🛒 SpringStack – Full Stack E-Commerce Application
 
-SpringStack is a full-stack e-commerce web application built with **Java Spring Boot (Backend)** and **React (Frontend)**.  
-It supports secure JWT-based authentication, role-based authorization (User/Admin), product management with images, cart & checkout, and a mock/Razorpay-integrated payment flow.
+SpringStack is a production-ready full-stack e-commerce web application built with **Java Spring Boot (Backend)** and **React + Vite (Frontend)**.  
+It supports secure JWT-based authentication, role-based authorization (User/Admin), optimized image handling, cart & checkout, and mock/Razorpay-integrated payment flow.  
+The application is fully deployable using **Render (Backend)** and **Vercel (Frontend)**.
 
 ---
 
 ## 🚀 Tech Stack
 
-**Backend**  
-- Java 17, Spring Boot 3.3  
-- Spring Security (JWT Authentication)  
-- Spring Data JPA (PostgreSQL)  
-- Validation, Lombok  
-- Razorpay SDK (payments)
+### Backend
+- Java 17
+- Spring Boot 3.3
+- Spring Security (JWT Authentication)
+- Spring Data JPA
+- PostgreSQL
+- Lombok
+- Bean Validation
+- Razorpay SDK (Optional)
 
-**Frontend**  
-- React + Vite  
-- React Router  
-- Axios (with JWT interceptor)  
-- Context API for global state  
-- Bootstrap for UI
+### Frontend
+- React 18 + Vite
+- React Router
+- Axios (JWT interceptor)
+- Context API for global state
+- Bootstrap 5
+- Lazy-loaded images
 
-**Database**  
-- PostgreSQL (DDL auto-update for dev, Flyway recommended for prod)
+### Database
+- PostgreSQL
+- DDL auto-update (Dev)
+- Flyway recommended (Production)
 
 ---
 
 ## ✨ Features
 
-- 🔑 **Authentication**: JWT-based login/register, role management  
-- 🛍️ **Products**:
-  - Browse products, search, view details
-  - Admin: Add, update, delete products with images  
-  - Stock management (auto-disable on 0 stock)  
-- 🛒 **Cart & Checkout**:
-  - LocalStorage-backed cart
-  - Real-time stock validation
-- 💳 **Payments**:
-  - Mock provider (default)  
-  - Razorpay test/live integration ready  
-- 📊 **Orders**:
-  - User: My Orders  
-  - Admin: All Orders dashboard  
+### 🔑 Authentication
+- JWT-based login & registration
+- Role-based authorization (USER / ADMIN)
+- Stateless backend configuration
+- Protected admin endpoints
+
+### 🛍️ Products
+- Browse products
+- Category filtering
+- Product details page
+- Admin: Add, update, delete products
+- Stock auto-disable when quantity reaches zero
+- Optimized image rendering (no BLOB prefetching)
+
+### 🛒 Cart & Checkout
+- LocalStorage-backed cart
+- Real-time stock validation
+- Quantity limit guards
+- Persistent cart across sessions
+
+### 💳 Payments
+- Mock provider (default)
+- Razorpay integration ready
+- Order creation after successful payment
+
+### 📊 Orders
+- User: My Orders
+- Admin: All Orders dashboard
+
+---
+
+## ⚡ Performance Optimizations
+
+- Removed N+1 image blob fetching
+- Direct image rendering via `/api/product/{id}/image`
+- Lazy loading images (`loading="lazy"`)
+- Reduced unnecessary API refetching
+- Optimized cart hydration logic
+- CORS configuration optimized for Vercel deployment
+- Stateless JWT authentication for faster API handling
 
 ---
 
 ## ⚙️ Installation & Setup
 
 ### 1️⃣ Backend (Spring Boot)
-```bash
+
 cd SpringBoot (BACK-END)
 mvn spring-boot:run
-```
 
 Configure `application.properties`:
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/telusko
-spring.datasource.username=postgres
-spring.datasource.password=Tiger
 
-jwt.secret=your-secret-key
-payments.provider=mock  # or razorpay
-```
+spring.datasource.url=jdbc:postgresql://localhost:5432/your_db
+spring.datasource.username=postgres
+spring.datasource.password=your_password
+
+app.jwt.secret=${APP_JWT_SECRET:dev-secret-change-me}
+payments.provider=mock
+
+If using environment variable:
+
+export APP_JWT_SECRET=your-production-secret
+
+---
 
 ### 2️⃣ Frontend (React + Vite)
-```bash
+
 cd ReactJS (FRONT-END)/react-ui-for-course-main/ecom-frontend-5-main
 npm install
 npm run dev
-```
+
+Create `.env` file:
+
+VITE_API_BASE_URL=http://java-full-stack-e-commerce-spring-stack-h81yz7upm.vercel.app
+
+For production:
+
+VITE_API_BASE_URL=https://java-full-stack-e-commerce-springstack.onrender.com
+
+---
+
+## 🌍 Production Deployment
+
+### Backend (Render)
+
+Set environment variables:
+APP_JWT_SECRET
+SPRING_DATASOURCE_URL
+SPRING_DATASOURCE_USERNAME
+SPRING_DATASOURCE_PASSWORD
+APP_CORS_ALLOWED_ORIGINS=https://*.vercel.app
+
+---
+
+### Frontend (Vercel)
+
+Create `vercel.json`:
+
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+}
+
+Set environment variable in Vercel:
+VITE_API_BASE_URL=https://your-backend.onrender.com/api
 
 ---
 
 ## 📸 Screenshots
 
 ### 🔐 Authentication
-- **Login**  
-  <img width="1919" height="997" alt="LoginPage" src="https://github.com/user-attachments/assets/24d19381-7801-4886-bd0b-3357c8c7f0a8" />
-
-- **Register**  
-  <img width="1919" height="996" alt="RegistrationPage" src="https://github.com/user-attachments/assets/e12ebf79-e806-4e0d-be34-b8d886af543a" />
-
+(Login & Register screenshots)
 
 ### 🏠 Home & Product Catalog
-- **Browse Products**  
-  <img width="1919" height="994" alt="UserHomePage" src="https://github.com/user-attachments/assets/e6ec38de-603f-48ab-8647-6e7900e1072b" />
+(Product browsing & filtering screenshots)
 
-
-- **Category Filter**  
-  <img width="1919" height="994" alt="AvailableCategories" src="https://github.com/user-attachments/assets/fc59606f-eb1e-484d-a718-9a217665900e" />
-
-
-### 📦 Cart & Checkout
-- **Cart View**  
-  <img width="1919" height="1001" alt="AddToCartPage" src="https://github.com/user-attachments/assets/b764ce88-3466-4ecc-9c8a-7042e9cdd6ce" />
-
+### 🛒 Cart & Checkout
+(Cart screenshot)
 
 ### 🛠️ Admin Features
-- **Add Product**  
-  <img width="1919" height="996" alt="AddingProductPage" src="https://github.com/user-attachments/assets/cdf38981-2554-4561-a041-7b9093e465e1" />
-
-
-- **Product Details (Admin Actions)**  
-  <img width="1919" height="995" alt="AdminProductPage" src="https://github.com/user-attachments/assets/907678d5-7085-44ec-b8c7-1fca295e7a6a" />
-
-- **Admin View of Products**  
-  <img width="1919" height="998" alt="AdminPage" src="https://github.com/user-attachments/assets/feadfc95-7834-4932-8216-cd4e4ce8aa87" />
-
+(Admin dashboard screenshots)
 
 ### 👤 User Features
-- **Product Details (User)**  
-  <img width="1919" height="997" alt="UserProductPage" src="https://github.com/user-attachments/assets/d1763b9f-1d9b-4e12-b8f2-8b62e0e7cea3" />
-
-- **My Orders**  
-  <img width="1919" height="987" alt="UserPurchasedOrders(Receipt)" src="https://github.com/user-attachments/assets/78db34b4-f475-4484-ada9-a3b268a26b10" />
+(My Orders screenshot)
 
 ---
 
 ## 📂 Project Structure
 
-```
 E-Commerce (JAVA FULL STACK - FINAL)/
 ├─ SpringBoot (BACK-END)/
-│  ├─ src/main/java/com/telusko/springecom/...
-│  └─ src/main/resources/
+│  ├─ controller/
+│  ├─ service/
+│  ├─ repository/
+│  ├─ model/
+│  ├─ security/
+│  └─ config/
+│
 ├─ ReactJS (FRONT-END)/
 │  └─ react-ui-for-course-main/ecom-frontend-5-main/
-```
+│     ├─ components/
+│     ├─ Context/
+│     ├─ axios.jsx
+│     └─ pages/
 
 ---
 
 ## 🛠️ Roadmap
 
-- [ ] Add pagination & filters for products  
-- [ ] Secure admin creation (disable “Register as Admin” in prod)  
-- [ ] Move product images to S3/MinIO (instead of DB BLOBs)  
-- [ ] Add email verification & password reset  
-- [ ] Improve order domain (Order + OrderItems)  
+- [ ] Add pagination & filters for products
+- [ ] Disable admin self-registration in production
+- [ ] Move product images to S3 / Cloud storage
+- [ ] Add email verification & password reset
+- [ ] Introduce Flyway migrations
+- [ ] Improve order domain modeling
 
 ---
 
 ## 🤝 Contributing
 
-Pull requests are welcome! Please open an issue first for major changes.
+Pull requests are welcome. Please open an issue first for major changes.
 
 ---
 
 ## 📜 License
 
-MIT License © 2025  
+MIT License © 2026
