@@ -6,6 +6,21 @@ The application is fully deployable using **Render (Backend)** and **Vercel (Fro
 
 ---
 
+## 🌍 Live Deployed Links
+
+### 🔗 Frontend (Vercel)
+https://java-full-stack-e-commerce-spring-stack-cofob8uki.vercel.app
+
+### 🔗 Backend API (Render)
+https://java-full-stack-e-commerce-springstack.onrender.com
+
+### 🔗 API Base URL
+https://java-full-stack-e-commerce-springstack.onrender.com/api
+
+> ⚠️ Note: Backend is hosted on Render free tier and may take 30–60 seconds to wake up after inactivity.
+
+---
+
 ## 🚀 Tech Stack
 
 ### Backend
@@ -108,11 +123,11 @@ npm run dev
 
 Create `.env` file:
 
-VITE_API_BASE_URL=http://java-full-stack-e-commerce-spring-stack-h81yz7upm.vercel.app
+VITE_API_BASE_URL=http://localhost:8080/api
 
 For production:
 
-VITE_API_BASE_URL=https://java-full-stack-e-commerce-springstack.onrender.com
+VITE_API_BASE_URL=https://your-backend.onrender.com/api
 
 ---
 
