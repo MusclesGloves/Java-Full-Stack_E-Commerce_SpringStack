@@ -5,15 +5,13 @@ import com.stack.spring.model.Product;
 import com.stack.spring.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api")
@@ -55,7 +53,10 @@ public class ProductController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(mediaType);
 
-        return new ResponseEntity<>(data, headers, HttpStatus.OK);
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .cacheControl(CacheControl.maxAge(30, TimeUnit.DAYS).cachePublic())
+                .body(product.getImageData());
     }
 
     // CREATE product (Admin only)
