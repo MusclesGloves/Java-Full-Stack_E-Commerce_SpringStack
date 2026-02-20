@@ -4,31 +4,26 @@ import com.stack.spring.security.service.AppUserDetailsService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.List;
-
-import org.springframework.http.HttpMethod;
+import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
@@ -44,7 +39,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public DaoAuthenticationProvider authProvider() {
@@ -62,12 +59,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // IMPORTANT: ensure Spring Security actually uses our CorsConfigurationSource bean
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // allow all preflight requests
+                        // CORS preflight must be allowed
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // public endpoints
@@ -88,39 +84,35 @@ public class SecurityConfig {
     }
 
     /**
-     * CHANGE #1:
-     * Read the Render env var directly.
+     * Supports wildcards like:
+     *   https://*.vercel.app
+     * while also supporting exact origins.
      *
-     * In Render set:
-     *   APP_CORS_ALLOWED_ORIGINS = https://<your-vercel-domain>,http://localhost:5173,http://localhost:3000
+     * You are setting: APP_CORS_ALLOWED_ORIGINS
+     * Spring maps it to: app.cors.allowed-origins
      */
-    @Value("${APP_CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}")
+    @Value("${app.cors.allowed-origins:http://localhost:5173,http://localhost:3000}")
     private String allowedOrigins;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
 
-        /**
-         * CHANGE #2:
-         * Trim spaces, and use explicit headers instead of "*".
-         * With allowCredentials(true), being explicit avoids preflight weirdness.
-         */
-        List<String> origins = Arrays.stream(allowedOrigins.split(","))
-                .map(String::trim)
-                .filter(s -> !s.isBlank())
-                .toList();
+        List<String> originPatterns =
+                Arrays.stream(allowedOrigins.split(","))
+                        .map(String::trim)
+                        .filter(s -> !s.isBlank())
+                        .collect(Collectors.toList());
 
-        cfg.setAllowedOriginPatterns(origins);
+        // IMPORTANT: patterns (wildcards) not plain allowed origins
+        cfg.setAllowedOriginPatterns(originPatterns);
 
         cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-        // Explicit headers for preflight
-        cfg.setAllowedHeaders(List.of("Content-Type", "Authorization"));
-
-        // Optional but often helpful if you return/expect Authorization header
+        cfg.setAllowedHeaders(List.of("*"));
         cfg.setExposedHeaders(List.of("Authorization"));
 
+        // You are sending JWT via Authorization header (not cookies),
+        // but keeping this true is fine as long as origins are not "*".
         cfg.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
