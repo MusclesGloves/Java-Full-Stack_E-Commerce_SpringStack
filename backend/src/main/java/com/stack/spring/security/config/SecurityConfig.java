@@ -111,7 +111,7 @@ public class SecurityConfig {
                 .filter(s -> !s.isBlank())
                 .toList();
 
-        cfg.setAllowedOrigins(origins);
+        cfg.setAllowedOriginPatterns(origins);
 
         cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
