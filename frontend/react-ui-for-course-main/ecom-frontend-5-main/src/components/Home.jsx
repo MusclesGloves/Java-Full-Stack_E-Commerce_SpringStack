@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import AppContext from "../Context/Context";
 import unplugged from "../assets/unplugged.png";
+import API from "../axios";
 
 const Home = ({ selectedCategory }) => {
   // ⬇️ include cart so we can check per-item quantities
@@ -23,8 +24,8 @@ const Home = ({ selectedCategory }) => {
         const updatedProducts = await Promise.all(
           data.map(async (product) => {
             try {
-              const response = await axios.get(
-                `http://localhost:8080/api/product/${product.id}/image`,
+              const response = await API.get(
+                `/product/${product.id}/image`,
                 { responseType: "blob" }
               );
               const imageUrl = URL.createObjectURL(response.data);
@@ -44,9 +45,9 @@ const Home = ({ selectedCategory }) => {
 
   const filteredProducts = selectedCategory
     ? products.filter(
-        (product) =>
-          product.category?.toLowerCase() === selectedCategory.toLowerCase()
-      )
+      (product) =>
+        product.category?.toLowerCase() === selectedCategory.toLowerCase()
+    )
     : products;
 
   if (isError) {
@@ -171,8 +172,8 @@ const Home = ({ selectedCategory }) => {
                       {isOut
                         ? "Out of Stock"
                         : atLimit
-                        ? "Limit Reached"
-                        : "Add to Cart"}
+                          ? "Limit Reached"
+                          : "Add to Cart"}
                     </button>
                   </div>
                 </Link>
